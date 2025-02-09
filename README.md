@@ -1,82 +1,65 @@
-# serverless_lambda serverless API
-The serverless_lambda project, created with [`aws-serverless-java-container`](https://github.com/aws/serverless-java-container).
+# Serverless Todo-Task Manager
 
-The starter project defines a simple `/ping` resource that can accept `GET` requests with its tests.
+This project is a simple **serverless** application built using **Spring Boot**, **AWS Lambda**, and **DynamoDB** to manage **To-Do** tasks. The app is designed to be deployed on AWS and offers basic operations like creating, reading, updating, deleting tasks, and user registration/login.
 
-The project folder also includes a `template.yml` file. You can use this [SAM](https://github.com/awslabs/serverless-application-model) file to deploy the project to AWS Lambda and Amazon API Gateway or test in local with the [SAM CLI](https://github.com/awslabs/aws-sam-cli). 
+## Features
 
-## Pre-requisites
-* [AWS CLI](https://aws.amazon.com/cli/)
-* [SAM CLI](https://github.com/awslabs/aws-sam-cli)
-* [Gradle](https://gradle.org/) or [Maven](https://maven.apache.org/)
+- **Serverless** architecture using **AWS Lambda** and **API Gateway**.
+- **DynamoDB** as the database to store tasks.
+- Basic **CRUD** operations for To-Do tasks.
+- **User registration** and **login** functionality.
+- **Authorization** for task ownership.
+- **Authentication** of CRUD operations using user tokens.
+- Built with **Spring Boot** for simplicity and maintainability.
 
-## Building the project
-You can use the SAM CLI to quickly build the project
-```bash
-$ mvn archetype:generate -DartifactId=serverless_lambda -DarchetypeGroupId=com.amazonaws.serverless.archetypes -DarchetypeArtifactId=aws-serverless-jersey-archetype -DarchetypeVersion=2.0.1 -DgroupId=org.example -Dversion=1.0-SNAPSHOT -Dinteractive=false
-$ cd serverless_lambda
-$ sam build
-Building resource 'Serverless_lambdaFunction'
-Running JavaGradleWorkflow:GradleBuild
-Running JavaGradleWorkflow:CopyArtifacts
+## Prerequisites
 
-Build Succeeded
+Before running the application locally or deploying it to AWS, ensure you have the following tools installed:
 
-Built Artifacts  : .aws-sam/build
-Built Template   : .aws-sam/build/template.yaml
+- **Java 11+**
+- **Maven 3+**
+- **AWS CLI** (configured with your AWS credentials)
 
-Commands you can use next
-=========================
-[*] Invoke Function: sam local invoke
-[*] Deploy: sam deploy --guided
-```
+## Project Setup
 
-## Testing locally with the SAM CLI
+1. **Clone the Repository**
 
-From the project root folder - where the `template.yml` file is located - start the API with the SAM CLI.
+   ```bash
+   git clone https://github.com/teapotka/todo_serverless.git
+   cd todo_serverless
+   ```
 
-```bash
-$ sam local start-api
+2. **Build the Project**
 
-...
-Mounting com.amazonaws.serverless.archetypes.StreamLambdaHandler::handleRequest (java11) at http://127.0.0.1:3000/{proxy+} [OPTIONS GET HEAD POST PUT DELETE PATCH]
-...
-```
+   Use Maven to build the project:
 
-Using a new shell, you can send a test ping request to your API:
+   ```bash
+   mvn clean package
+   ```
 
-```bash
-$ curl -s http://127.0.0.1:3000/ping | python -m json.tool
+3. **Configure AWS Credentials**
+   
+   Ensure that your AWS CLI is configured properly to access your AWS account:
 
-{
-    "pong": "Hello, World!"
-}
-``` 
+    ```bash 
+    aws configure
+    ```
+    This will prompt for your AWS Access Key, Secret Key, and region.
 
-## Deploying to AWS
-To deploy the application in your AWS account, you can use the SAM CLI's guided deployment process and follow the instructions on the screen
+## API Endpoints
+The following endpoints are available:
 
-```
-$ sam deploy --guided
-```
+### User Operations
+- POST /register: Register a new user
+- POST /login: Login as an existing user
 
-Once the deployment is completed, the SAM CLI will print out the stack's outputs, including the new application URL. You can use `curl` or a web browser to make a call to the URL
+### Tasks Operations
 
-```
-...
--------------------------------------------------------------------------------------------------------------
-OutputKey-Description                        OutputValue
--------------------------------------------------------------------------------------------------------------
-Serverless_lambdaApi - URL for application            https://xxxxxxxxxx.execute-api.us-west-2.amazonaws.com/Prod/pets
--------------------------------------------------------------------------------------------------------------
-```
+>Note: **Authentication token is required**
 
-Copy the `OutputValue` into a browser or use curl to test your first request:
+- GET /tasks: Retrieve all to-do tasks.
+- POST /tasks: Create a new to-do task.
+- GET /tasks/{id}: Retrieve a specific to-do task by ID.
+- PUT /tasks/{id}: Update a to-do task by ID.
+- DELETE /tasks/{id}: Delete a to-do task by ID.
 
-```bash
-$ curl -s https://xxxxxxx.execute-api.us-west-2.amazonaws.com/Prod/ping | python -m json.tool
-
-{
-    "pong": "Hello, World!"
-}
-```
